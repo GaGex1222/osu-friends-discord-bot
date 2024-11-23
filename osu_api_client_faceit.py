@@ -65,8 +65,13 @@ class osuApiClient:
                 data = response.json()
                 if len(data["scores"]) > 0: # check if the user even have a score on the map
                     user_best_score = data["scores"][0]
-                    accuracy_string = str(user_best_score["accuracy"]).split('.')[1]
-                    accuracy_organized = f"{accuracy_string[0:2]}.{accuracy_string[2:4]}%"
+                    accuracy_organized = None
+                    if str(user_best_score["accuracy"]) == "1":
+                        accuracy_organized = "100"
+                    else:
+                        accuracy_string = str(user_best_score["accuracy"]).split('.')[1]
+                        accuracy_organized = f"{accuracy_string[0:2]}.{accuracy_string[2:4]}"                        
+
                     user_mods = None
                     if len(user_best_score["mods"]) > 0:
                         user_mods = "".join(user_best_score["mods"])

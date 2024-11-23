@@ -20,19 +20,22 @@ async def on_ready():
     await bot.tree.sync()
     print(f'Logged in as {bot.user.name}')
 
-# @bot.tree.command(name='commands', description="All commands available")
-# async def help(interaction: discord.Interaction):
-#     awa
+@bot.tree.command(name='commands', description="All commands available")
+async def help(interaction: discord.Interaction):
+    commands_embed = discord.Embed(title="Commands", color=discord.Color.pink())
+    commands_embed.set_footer(text="Developed By GaGex")
+    commands_embed.add_field(name="check_faceit_beatmap_scores (beatmap id)", value=f"Here’s an example link to the beatmap: https://osu.ppy.sh/beatmapsets/983911#osu/2118443.\n The beatmap ID in this case is 2118443.")
+    await interaction.response.send_message(embed=commands_embed)
 
-@bot.tree.command(name='check_faceit_beatmap_score', description="Checks all scores of faceit members with the given beatmap ID")
+@bot.tree.command(name='check_faceit_beatmap_scores', description="Checks all scores of faceit members with the given beatmap ID")
 @app_commands.describe(beatmap_id="The beatmap ID in osu!")
 async def check_scores(interaction: discord.Interaction, beatmap_id: int):
     await interaction.response.defer()
-    scores = osu_api_client.get_faceit_beatmap_scores(beatmap_id=beatmap_id)
-    beatmap_info = osu_api_client.get_beatmap_info(beatmap_id=beatmap_id)
-
-    if not beatmap_info:
-        await interaction.followup.send("Could not retrieve beatmap information.")
+    try:
+        scores = osu_api_client.get_faceit_beatmap_scores(beatmap_id=beatmap_id)
+        beatmap_info = osu_api_client.get_beatmap_info(beatmap_id=beatmap_id)
+    except Exception as e:
+        await interaction.followup.send("Could not retrieve information - check the beatmap id provided.")
         return
 
     scores_embed = discord.Embed(
@@ -42,7 +45,7 @@ async def check_scores(interaction: discord.Interaction, beatmap_id: int):
     )
     
     scores_embed.set_image(url=beatmap_info["image"])
-    scores_embed.set_footer(text="Developed by GaGex", icon_url="https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Osu%21_Logo_2016.svg/768px-Osu%21_Logo_2016.svg.png")
+    scores_embed.set_footer(text="Developed By GaGex")
     for score in scores:
         player_info = osu_api_client.get_user_info(user_id=score["user_id"])
         player_image = player_info["avatar"]
@@ -51,7 +54,7 @@ async def check_scores(interaction: discord.Interaction, beatmap_id: int):
                                                                             f"Accuracy: {score['accuracy']}%\n"
                                                                             f"Mods: {score['mods']}\n"
                                                                             f"PP: {score['pp']}\n"
-                                                                            f"Score: {score['score']}\n"
+                                                                            f"Score: {"{:,}".format(score['score'])}\n"
                                                                             f"Rank: {score["rank"]}\n"
                                                                             f"Date: {score['date']}", inline=False)
     await interaction.followup.send(embed=scores_embed)
