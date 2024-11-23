@@ -10,8 +10,8 @@ import requests
 # # Define the endpoint and the parameters
 # url = 'https://osu.ppy.sh/oauth/token'
 # data = {
-#     'client_id': '36338',
-#     'client_secret': '6r7FGHKqPVEVIpzLasZ9JXjoQ6OdKMUpk4metSfV',
+#     'client_id': client_id,
+#     'client_secret': client_secret,
 #     'grant_type': 'client_credentials',
 #     'scope': 'public'
 # }
