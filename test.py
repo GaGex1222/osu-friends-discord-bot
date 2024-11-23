@@ -26,3 +26,27 @@ acc = 0.9773844641101278
 acc_str = str(acc)
 
 print(acc_str.split(".")[1])
+
+list_of_dicts = [
+    {
+        "score": 200
+    },
+    {
+        "score": 436324
+    },
+    {
+        "score": 2003
+    }
+]
+
+faceit_members_osu_ids = {
+    "gal": 13485854,
+    "berez": 16365355,
+    "dvir": 16546385,
+    "yarin": 16538964,
+    "avraham": 16265489,
+    "menash": 18338537
+}
+
+for mebmer, key in faceit_members_osu_ids.items():
+    print(mebmer, key)
