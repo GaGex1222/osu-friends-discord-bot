@@ -24,7 +24,7 @@ async def on_ready():
 async def help(interaction: discord.Interaction):
     commands_embed = discord.Embed(title="Commands", color=discord.Color.pink())
     commands_embed.set_footer(text="Developed By GaGex")
-    commands_embed.add_field(name="check_faceit_beatmap_scores (beatmap id)", value=f"Here’s an example link to the beatmap: https://osu.ppy.sh/beatmapsets/983911#osu/2118443.\n The beatmap ID in this case is 2118443.")
+    commands_embed.add_field(name="check_faceit_beatmap_scores (beatmap id)", value=f"Here’s an example link to the beatmap: https://osu.ppy.sh/beatmapsets/983911#osu/2118443.\n The beatmap ID in this case is 2118443.\n (Graveyard maps dont work!)")
     await interaction.response.send_message(embed=commands_embed)
 
 @bot.tree.command(name='check_faceit_beatmap_scores', description="Checks all scores of faceit members with the given beatmap ID")
@@ -50,7 +50,8 @@ async def check_scores(interaction: discord.Interaction, beatmap_id: int):
         player_info = osu_api_client.get_user_info(user_id=score["user_id"])
         player_image = player_info["avatar"]
 
-        scores_embed.add_field(name=f"Username: {score['username']}", value=f"Max Combo: {score['combo']}\n"
+        scores_embed.add_field(name=f"Username: {score['username']}", value=f"Profile picture: {player_image}\n"
+                                                                            f"Max Combo: {score['combo']}\n"
                                                                             f"Accuracy: {score['accuracy']}%\n"
                                                                             f"Mods: {score['mods']}\n"
                                                                             f"PP: {score['pp']}\n"

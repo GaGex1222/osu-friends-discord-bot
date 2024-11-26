@@ -10,7 +10,8 @@ faceit_members_osu_ids = {
     "XxVeNoMXx171": 16546385,
     "HashiramaSenju": 16538964,
     "StiTumpy": 16265489,
-    "menash": 18338537
+    "menash": 18338537,
+    "ilayalimlh": 17507515
 }
 class osuApiClient:
     def __init__(self, client_id, client_secret):
@@ -109,7 +110,6 @@ class osuApiClient:
         if response.status_code == 200:
             data = response.json()
             user_data = {
-                "username": data["username"],
                 "avatar": data['avatar_url'],
             }
             return user_data
@@ -135,9 +135,39 @@ class osuApiClient:
             }
             return beatmap_info
         
+    def get_faceit_users_info(self):
+        self.is_token_valid()
 
-osu_client = osuApiClient(client_id=client_id, client_secret=client_secret)
-osu_client.get_beatmap_info(beatmap_id=1188131)
+        users_array = []
+        for user, user_id in faceit_members_osu_ids.items():
+            users_array.append(str(user_id))
+        print(users_array)
+        
+        url = "https://osu.ppy.sh/api/v2/users"
+        headers = {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "Authorization": f"Bearer {self.access_token}"
+        }
+        url_params = {
+            "ids[]": users_array
+        }
+        users_response = requests.get(url=url, params=url_params, headers=headers)
+        if users_response.status_code == 200:
+            print(users_response.json())
+            user_results = {}
+            for user in users_response.json()["users"]:
+                user_global_rank = user["statistics_rulesets"]["osu"]["global_rank"]
+                print(user_global_rank)
+                user_results.update({user["username"]: {"global_rank": user_global_rank}})
+            print(user_results)
+
+
+osucient = osuApiClient(client_id=client_id, client_secret=client_secret)
+
+osucient.get_faceit_users_info()
+        
+
         
         
         
