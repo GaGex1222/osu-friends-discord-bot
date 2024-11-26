@@ -163,9 +163,6 @@ class osuApiClient:
             print(user_results)
 
 
-osucient = osuApiClient(client_id=client_id, client_secret=client_secret)
-
-osucient.get_faceit_users_info()
         
 
         

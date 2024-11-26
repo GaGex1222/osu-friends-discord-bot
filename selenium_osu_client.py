@@ -9,10 +9,21 @@ CHROME_DRIVER_PATH = os.getenv("chrome_driver_path")
 class OsuSeleniumClient:
     def __init__(self):
         self.chrome_service = webdriver.ChromeService(executable_path="./chromedriver-win64/chromedriver.exe")
-        self.driver = webdriver.Chrome(service=self.chrome_service)
+        self.chrome_options = webdriver.ChromeOptions()
+        self.chrome_options.add_argument("--headless")
+        self.driver = webdriver.Chrome(service=self.chrome_service, options=self.chrome_options)
     
-    def get_map_difficulties(self):
-        
+
+    def reset_driver(self):
+        self.driver.quit()
+        self.driver = webdriver.Chrome(service=self.chrome_service, options=self.chrome_options)
+
+
+    def get_map_info(self):
+        beatmap_image_div = self.driver.find_element(By.CSS_SELECTOR, ".beatmapset-cover.beatmapset-cover--full")
+        beatmap_image_url = beatmap_image_div.get_attribute('style').split('"')[1]
+        beatmap_title = self.driver.execute_script("""return document.querySelector('.beatmapset-header__details-text-link').innerText;""")
+        print(beatmap_title)
         all_difficulties_div = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, "beatmapset-beatmap-picker"))
         )
@@ -28,32 +39,34 @@ class OsuSeleniumClient:
                 all_beatmaps_names.append(difficulty_name.split("Star Rating")[0])
         data = {
             "beatmap_ids": all_beatmaps_ids,
-            "beatmap_names": all_beatmaps_names
+            "beatmap_names": all_beatmaps_names,
+            "beatmap_image_url": beatmap_image_url,
+            "beatmap_title": beatmap_title
         }
-        self.driver.quit()
+        print(data)
         return data
 
         
 
 
 
-    def osu_beatmapset_search(self):
-        song_name = "first storm will stetson"
-        url = f"https://www.google.com/search?q=osu {song_name}"
-        self.driver.get(url=url)
-        root = self.driver.find_element(By.CSS_SELECTOR, '.yuRUbf')
-        span = root.find_element(By.TAG_NAME, "span")
-        a_tag = span.find_element(By.TAG_NAME, "a")
-        a_tag.click()
-        self.get_map_difficulties()
+    def osu_beatmapset_search(self, beatmapset_name):
+        try:
+            url = f"https://www.google.com/search?q=osu {beatmapset_name} beatmap"
+            self.driver.get(url=url)
+            root = self.driver.find_element(By.CSS_SELECTOR, '.yuRUbf')
+            span = root.find_element(By.TAG_NAME, "span")
+            a_tag = span.find_element(By.TAG_NAME, "a")
+            a_tag.click()
+            data = self.get_map_info()
+            return data
+        except Exception as e:
+            print(f"Error in osu_beatmapset_search: {e}")
+            self.reset_driver()  
+            raise
         
 
 
 
 
-
-
-seleniumClient = OsuSeleniumClient()
-
-seleniumClient.osu_beatmapset_search()
     
