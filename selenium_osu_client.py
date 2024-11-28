@@ -23,7 +23,6 @@ class OsuSeleniumClient:
         beatmap_image_div = self.driver.find_element(By.CSS_SELECTOR, ".beatmapset-cover.beatmapset-cover--full")
         beatmap_image_url = beatmap_image_div.get_attribute('style').split('"')[1]
         beatmap_title = self.driver.execute_script("""return document.querySelector('.beatmapset-header__details-text-link').innerText;""")
-        print(beatmap_title)
         all_difficulties_div = WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.CLASS_NAME, "beatmapset-beatmap-picker"))
         )
@@ -64,8 +63,6 @@ class OsuSeleniumClient:
             print(f"Error in osu_beatmapset_search: {e}")
             self.reset_driver()  
             raise
-        
-
 
 
 

@@ -44,6 +44,13 @@ class osuApiClient:
     def is_token_valid(self):
         if self.access_token is None or time.time() >= self.token_expires_at:
             self.get_access_token()
+
+    def check_faceit_users_online(self):
+        self.is_token_valid()
+        
+        
+
+
         
     def get_faceit_beatmap_scores(self, beatmap_id):
         self.is_token_valid()
@@ -158,9 +165,14 @@ class osuApiClient:
             user_results = {}
             for user in users_response.json()["users"]:
                 user_global_rank = user["statistics_rulesets"]["osu"]["global_rank"]
-                print(user_global_rank)
-                user_results.update({user["username"]: {"global_rank": user_global_rank}})
-            print(user_results)
+                user_is_online = user["is_online"]
+                user_results.update({user["username"]: {"global_rank": user_global_rank, "is_online": user_is_online}})
+            return user_results
+
+osuclient = osuApiClient(client_id=client_id, client_secret=client_secret)
+
+
+osuclient.get_faceit_users_info()
 
 
         
